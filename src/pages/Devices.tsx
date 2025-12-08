@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { devices } from "@/data/devices";
 import { MapPin, Cpu, Wifi, WifiOff, ExternalLink, Activity } from "lucide-react";
+import DeviceMap from "@/components/DeviceMap";
 
 export default function Devices() {
   const onlineDevices = devices.filter((d) => d.status === "online").length;
@@ -46,14 +47,17 @@ export default function Devices() {
               <div className="grid lg:grid-cols-3 gap-6">
                 {/* Map Placeholder */}
                 <div className="lg:col-span-2">
-                  <div className="bg-muted rounded-xl h-64 lg:h-80 flex items-center justify-center border-2 border-dashed border-border">
-                    <div className="text-center">
-                      <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                      <p className="text-muted-foreground font-medium">Interactive Map Coming Soon</p>
-                      <p className="text-sm text-muted-foreground/70">Device locations across India</p>
-                    </div>
-                  </div>
-                </div>
+  <div className="bg-muted rounded-xl h-64 lg:h-80 overflow-hidden border-2 border-border">
+    <DeviceMap
+      locations={[
+        { lat: 17.3850, lng: 78.4867, name: "Hyderabad" },
+        { lat: 28.6139, lng: 77.2090, name: "Delhi" },
+        { lat: 19.0760, lng: 72.8777, name: "Mumbai" },
+      ]}
+    />
+  </div>
+</div>
+
 
                 {/* Stats */}
                 <div className="space-y-4">
