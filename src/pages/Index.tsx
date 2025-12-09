@@ -116,10 +116,20 @@ export default function Index() {
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent rounded-3xl blur-3xl"></div>
               <div className="relative bg-hero-muted rounded-3xl p-8 border border-hero-foreground/10">
                 <div className="aspect-video bg-hero rounded-xl flex items-center justify-center border border-hero-foreground/10">
-                  <div className="text-center">
-                    <Eye className="w-16 h-16 text-primary mx-auto mb-4 animate-pulse" />
-                    <p className="text-hero-foreground/50">Live Feed Preview</p>
-                  </div>
+               <div className="aspect-video bg-black rounded-xl overflow-hidden border border-hero-foreground/10">
+              <video
+    src="/guardian.mp4"     // put your file inside /public folder
+    controls
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="w-full h-full object-cover"
+  />
+</div>
+
+              
+
                 </div>
                 <div className="grid grid-cols-3 gap-4 mt-6">
                   {["GPS Active", "IMU Recording", "AI Processing"].map((label) => (
