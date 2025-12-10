@@ -57,7 +57,7 @@ const RoadDataDashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground pt-16">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-8">
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border pb-6">
