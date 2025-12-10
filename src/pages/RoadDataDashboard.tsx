@@ -15,7 +15,11 @@ import {
   Clock,
   AlertTriangle,
   Navigation,
+  Thermometer,
 } from "lucide-react";
+
+const CHANNEL_ID = 3136456;
+const RESULTS = 1;
 
 const RoadDataDashboard = () => {
   const [coordinates, setCoordinates] = useState({ lat: "--", lng: "--" });
@@ -23,18 +27,22 @@ const RoadDataDashboard = () => {
 
   useEffect(() => {
     const fetchThingSpeakData = async () => {
-      const url = `https://api.thingspeak.com/channels/3132627/feeds.json?results=1`;
+      const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?results=${RESULTS}`;
       try {
         const response = await fetch(url);
         const data = await response.json();
+
         if (data.feeds && data.feeds.length > 0) {
           const latest = data.feeds[0];
-          if (latest.field3 && latest.field4) {
+
+          // adjust mapping if needed: here assuming field1 = lat, field2 = lng
+          if (latest.field1 && latest.field2) {
             setCoordinates({
-              lat: parseFloat(latest.field3).toFixed(6),
-              lng: parseFloat(latest.field4).toFixed(6),
+              lat: parseFloat(latest.field1).toFixed(6),
+              lng: parseFloat(latest.field2).toFixed(6),
             });
           }
+
           const updateTime = new Date(latest.created_at);
           setLastUpdate(updateTime.toLocaleTimeString());
         }
@@ -98,15 +106,16 @@ const RoadDataDashboard = () => {
               <p className="text-sm text-muted-foreground">
                 ThingSpeak Channel ID:{" "}
                 <span className="font-mono font-bold text-foreground">
-                  3132627
+                  {CHANNEL_ID}
                 </span>
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Charts Grid */}
+        {/* Charts Grid – Acceleration X & Y */}
         <section className="grid md:grid-cols-2 gap-6">
+          {/* Accel X – NEW STYLE */}
           <Card className="rounded-2xl shadow-sm">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -116,16 +125,21 @@ const RoadDataDashboard = () => {
               <CardDescription>G-Force Latitudinal</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-xl overflow-hidden border bg-black h-[320px] md:h-[360px]">
-                <iframe
-                  className="w-full h-full border-0"
-                  src="https://thingspeak.com/channels/3132627/charts/1?bgcolor=%23000000&color=%23f97316&dynamic=true&results=100&type=line&update=15&yaxis=Accel+X+(G)&title=Acceleration+X"
-                  title="Acceleration X"
-                />
+              {/* Outer soft container like second image */}
+              <div className="rounded-2xl border bg-muted/20 p-3 md:p-4">
+                {/* Scrollable inner area with white chart background */}
+                <div className="rounded-xl bg-white overflow-x-auto overflow-y-hidden">
+                  <iframe
+                    className="border-0 w-[700px] h-[260px] md:h-[280px]"
+                    src={`https://thingspeak.com/channels/${CHANNEL_ID}/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15`}
+                    title="Acceleration X"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
 
+          {/* Accel Y – NEW STYLE */}
           <Card className="rounded-2xl shadow-sm">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -135,12 +149,82 @@ const RoadDataDashboard = () => {
               <CardDescription>G-Force Longitudinal</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-xl overflow-hidden border bg-black h-[320px] md:h-[360px]">
-                <iframe
-                  className="w-full h-full border-0"
-                  src="https://thingspeak.com/channels/3132627/charts/2?bgcolor=%23000000&color=%23f97316&dynamic=true&results=100&type=line&update=15&yaxis=Accel+Y+(G)&title=Acceleration+Y"
-                  title="Acceleration Y"
-                />
+              <div className="rounded-2xl border bg-muted/20 p-3 md:p-4">
+                <div className="rounded-xl bg-white overflow-x-auto overflow-y-hidden">
+                  <iframe
+                    className="border-0 w-[700px] h-[260px] md:h-[280px]"
+                    src={`https://thingspeak.com/channels/${CHANNEL_ID}/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15`}
+                    title="Acceleration Y"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* NEW Charts Grid – Z, Temperature, Potholes */}
+        <section className="grid lg:grid-cols-3 md:grid-cols-2 gap-6">
+          {/* Z Axis */}
+          <Card className="rounded-2xl shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Activity className="h-5 w-5 text-primary" />
+                Acceleration Z-Axis
+              </CardTitle>
+              <CardDescription>Vertical G-Force</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-2xl border bg-muted/20 p-3 md:p-4">
+                <div className="rounded-xl bg-white overflow-x-auto overflow-y-hidden">
+                  <iframe
+                    className="border-0 w-[700px] h-[260px] md:h-[280px]"
+                    src="https://thingspeak.com/channels/3136456/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"
+                    title="Acceleration Z"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Temperature */}
+          <Card className="rounded-2xl shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Thermometer className="h-5 w-5 text-primary" />
+                Temperature
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-2xl border bg-muted/20 p-3 md:p-4">
+                <div className="rounded-xl bg-white overflow-x-auto overflow-y-hidden">
+                  <iframe
+                    className="border-0 w-[700px] h-[260px] md:h-[280px]"
+                    src="https://thingspeak.com/channels/3136456/charts/4?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"
+                    title="Temperature"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Potholes */}
+          <Card className="rounded-2xl shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+                Pothole Events
+              </CardTitle>
+              <CardDescription>Detected road anomalies</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-2xl border bg-muted/20 p-3 md:p-4">
+                <div className="rounded-xl bg-white overflow-x-auto overflow-y-hidden">
+                  <iframe
+                    className="border-0 w-[700px] h-[260px] md:h-[280px]"
+                    src="https://thingspeak.com/channels/3136456/charts/5?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line"
+                    title="Potholes"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
