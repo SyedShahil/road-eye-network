@@ -40,21 +40,16 @@ export default function Devices() {
       </section>
 
       {/* Main Content */}
-      <section className="py-12">
+     <div className="">
+       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="mb-8">
             <CardContent className="p-6">
               <div className="grid lg:grid-cols-3 gap-6">
                 {/* Map Placeholder */}
                 <div className="lg:col-span-2">
-  <div className="bg-muted rounded-xl h-64 lg:h-80 overflow-hidden border-2 border-border">
-    <DeviceMap
-      locations={[
-        { lat: 17.3850, lng: 78.4867, name: "Hyderabad" },
-        { lat: 28.6139, lng: 77.2090, name: "Delhi" },
-        { lat: 19.0760, lng: 72.8777, name: "Mumbai" },
-      ]}
-    />
+  <div className="bg-muted rounded-xl h-full overflow-hidden border-2 border-border ">
+    <img src = "./Map.png"/>
   </div>
 </div>
 
@@ -188,6 +183,7 @@ export default function Devices() {
           </div>
         </div>
       </section>
+     </div>
     </div>
   );
 }
