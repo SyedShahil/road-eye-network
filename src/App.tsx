@@ -10,6 +10,7 @@ import Devices from "./pages/Devices";
 import Data from "./pages/Data";
 import Datasets from "./pages/Datasets";
 import NotFound from "./pages/NotFound";
+import RoadDataDashboard from "./pages/RoadDataDashboard";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,8 @@ const App = () => (
               <Route path="/data" element={<Data />} />
               <Route path="/datasets" element={<Datasets />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/road-data-dashboard" element={<RoadDataDashboard />} />
+
             </Routes>
           </main>
           <Footer />

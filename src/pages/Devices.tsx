@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/table";
 import { devices } from "@/data/devices";
 import { MapPin, Cpu, Wifi, WifiOff, ExternalLink, Activity } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import DeviceMap from "@/components/DeviceMap";
 
 export default function Devices() {
+  const navigate = useNavigate();
   const onlineDevices = devices.filter((d) => d.status === "online").length;
   const uniqueCities = new Set(devices.map((d) => d.city.split(" – ")[0])).size;
 
@@ -39,151 +41,180 @@ export default function Devices() {
         </div>
       </section>
 
-      {/* Main Content */}
-     <div className="">
-       <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="mb-8">
-            <CardContent className="p-6">
-              <div className="grid lg:grid-cols-3 gap-6">
-                {/* Map Placeholder */}
-                <div className="lg:col-span-2">
-  <div className="bg-muted rounded-xl h-full overflow-hidden border-2 border-border ">
-    <img src = "./Map.png"/>
-  </div>
-</div>
+      <div className="">
+        <section className="py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+            {/* Map + Stats */}
+            <Card className="mb-8">
+              <CardContent className="p-6">
+                <div className="grid lg:grid-cols-3 gap-6">
 
-                {/* Stats */}
-                <div className="space-y-4">
-                  {stats.map((stat) => (
-                    <Card key={stat.label} className="bg-muted/50 border-border/50">
-                      <CardContent className="p-4 flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                          <stat.icon className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold">{stat.value}</div>
-                          <div className="text-sm text-muted-foreground">{stat.label}</div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {/* Map */}
+                  <div className="lg:col-span-2">
+                    <div className="bg-muted rounded-xl h-full overflow-hidden border-2 border-border ">
+                      <img src="./Map.png" />
+                    </div>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="space-y-4">
+                    {stats.map((stat) => (
+                      <Card key={stat.label} className="bg-muted/50 border-border/50">
+                        <CardContent className="p-4 flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                            <stat.icon className="w-6 h-6 text-primary" />
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold">{stat.value}</div>
+                            <div className="text-sm text-muted-foreground">{stat.label}</div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Devices Table - Desktop */}
-          <Card className="hidden md:block">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            {/* Devices Table */}
+            <Card className="hidden md:block">
+              
+              {/* ⭐ FINAL FIX — makes title left & button right ⭐ */}
+              <CardHeader className="w-full flex flex-row items-center justify-between">
+
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-primary" />
+                  Device Fleet Status
+                </CardTitle>
+
+                <Button
+                  onClick={() => navigate("/road-data-dashboard")}
+                  className="flex items-center gap-2"
+                >
+                  View Road Data
+                  <ExternalLink className="w-4 h-4" />
+                </Button>
+
+              </CardHeader>
+
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Device ID</TableHead>
+                      <TableHead>City / Location</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Last Seen</TableHead>
+                      <TableHead>Sensor Channel</TableHead>
+                      <TableHead className="text-right">Action</TableHead>
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {devices.map((device) => (
+                      <TableRow key={device.id}>
+                        <TableCell className="font-medium font-mono">{device.id}</TableCell>
+                        <TableCell>{device.city}</TableCell>
+
+                        <TableCell>
+                          <Badge
+                            variant={device.status === "online" ? "default" : "destructive"}
+                            className={
+                              device.status === "online"
+                                ? "bg-success hover:bg-success/90"
+                                : ""
+                            }
+                          >
+                            {device.status === "online" ? (
+                              <Wifi className="w-3 h-3 mr-1" />
+                            ) : (
+                              <WifiOff className="w-3 h-3 mr-1" />
+                            )}
+                            {device.status}
+                          </Badge>
+                        </TableCell>
+
+                        <TableCell className="text-muted-foreground">{device.lastSeen}</TableCell>
+                        <TableCell className="text-muted-foreground font-mono text-sm">
+                          ThingSpeak
+                        </TableCell>
+
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate('/dashboard')}
+                          >
+                            Open Telemetry
+                            <ExternalLink className="w-3 h-3 ml-1" />
+                          </Button>
+                        </TableCell>
+
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden space-y-4">
+              <h2 className="text-xl font-bold flex items-center gap-2">
                 <Activity className="w-5 h-5 text-primary" />
                 Device Fleet Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Device ID</TableHead>
-                    <TableHead>City / Location</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Last Seen</TableHead>
-                    <TableHead>Sensor Channel</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {devices.map((device) => (
-                    <TableRow key={device.id}>
-                      <TableCell className="font-medium font-mono">{device.id}</TableCell>
-                      <TableCell>{device.city}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={device.status === "online" ? "default" : "destructive"}
-                          className={
-                            device.status === "online"
-                              ? "bg-success hover:bg-success/90"
-                              : ""
-                          }
-                        >
-                          {device.status === "online" ? (
-                            <Wifi className="w-3 h-3 mr-1" />
-                          ) : (
-                            <WifiOff className="w-3 h-3 mr-1" />
-                          )}
-                          {device.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">{device.lastSeen}</TableCell>
-                      <TableCell className="text-muted-foreground font-mono text-sm">ThingSpeak</TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => window.open(device.thingspeakUrl, "_blank")}
-                        >
-                          Open Telemetry
-                          <ExternalLink className="w-3 h-3 ml-1" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+              </h2>
 
-          {/* Devices Cards - Mobile */}
-          <div className="md:hidden space-y-4">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary" />
-              Device Fleet Status
-            </h2>
-            {devices.map((device) => (
-              <Card key={device.id} className="bg-card">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <div className="font-mono font-bold text-lg">{device.id}</div>
-                      <div className="text-sm text-muted-foreground">{device.city}</div>
+              {devices.map((device) => (
+                <Card key={device.id} className="bg-card">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="font-mono font-bold text-lg">{device.id}</div>
+                        <div className="text-sm text-muted-foreground">{device.city}</div>
+                      </div>
+
+                      <Badge
+                        variant={device.status === "online" ? "default" : "destructive"}
+                        className={
+                          device.status === "online"
+                            ? "bg-success hover:bg-success/90"
+                            : ""
+                        }
+                      >
+                        {device.status === "online" ? (
+                          <Wifi className="w-3 h-3 mr-1" />
+                        ) : (
+                          <WifiOff className="w-3 h-3 mr-1" />
+                        )}
+                        {device.status}
+                      </Badge>
                     </div>
-                    <Badge
-                      variant={device.status === "online" ? "default" : "destructive"}
-                      className={
-                        device.status === "online"
-                          ? "bg-success hover:bg-success/90"
-                          : ""
-                      }
+
+                    <div className="text-sm text-muted-foreground mb-4">
+                      Last seen: {device.lastSeen}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => window.open(device.thingspeakUrl, "_blank")}
                     >
-                      {device.status === "online" ? (
-                        <Wifi className="w-3 h-3 mr-1" />
-                      ) : (
-                        <WifiOff className="w-3 h-3 mr-1" />
-                      )}
-                      {device.status}
-                    </Badge>
-                  </div>
-                  <div className="text-sm text-muted-foreground mb-4">
-                    Last seen: {device.lastSeen}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    onClick={() => window.open(device.thingspeakUrl, "_blank")}
-                  >
-                    Open Telemetry
-                    <ExternalLink className="w-3 h-3 ml-1" />
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                      Open Telemetry
+                      <ExternalLink className="w-3 h-3 ml-1" />
+                    </Button>
+
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
           </div>
-        </div>
-      </section>
-     </div>
+        </section>
+      </div>
+
     </div>
   );
 }
